@@ -5,14 +5,18 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-
-    public float ballSpeed = 5f;
+    public float initialBallSpeed = 5f;
+    private float ballSpeed;
     
     public Transform paddleLeft;
     public Transform paddleRight;
     
     
     private Vector2 direction = Vector2.one;
+    private void Start()
+    {
+        ballSpeed = initialBallSpeed;
+    }
 
     void Update()
     {
@@ -35,13 +39,13 @@ public class Ball : MonoBehaviour
 
         if (direction.y > 0 && position.y >= (screenTop - 0.25f))
         {
-            direction.y = -1f;
+            direction.y = -AngleDirection();
             ballSpeed += 0.10f;
         }
 
         if (direction.y < 0 && position.y <= (screenBotton + 0.25f))
         {
-            direction.y = 1f;
+            direction.y = AngleDirection();
             ballSpeed += 0.10f;
         }
     }
@@ -56,8 +60,7 @@ public class Ball : MonoBehaviour
                 && (transform.position.y > paddleRight.position.y - paddleRight.localScale.y / 2f)
                 && (transform.position.y < paddleRight.position.y + paddleRight.localScale.y / 2f))
             {
-                direction.x = -1f;
-                
+                InvertDirection();                            
             }
 
         } else if (direction.x < 0)
@@ -68,19 +71,24 @@ public class Ball : MonoBehaviour
                 && (transform.position.y > paddleLeft.position.y - paddleLeft.localScale.y / 2f)
                 && (transform.position.y < paddleLeft.position.y + paddleLeft.localScale.y / 2f))
             {
-                direction.x = 1f;
+                InvertDirection();
             }
         }
     }
 
+    public void ResetToInitialSpeed()
+    {
+        ballSpeed = initialBallSpeed;
+    }
+
     public void InvertDirection()
     {
-        if (direction.x < 0) {
-            direction.x = 1f;
-        } else if (direction.x > 0)
-        {
-            direction.x = -1f;
-        }
+        direction.x = -direction.x;        
+    }
+
+    private float AngleDirection()
+    {
+        return Random.Range(0.5f, 1.5f);
     }
 
 

@@ -1,28 +1,27 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-
-    public int homeScore = 0;
-    public int awayScore = 0;
-
     public Transform ball;
     public Text score;
+    public Text clock;
+    public Text quarters;
+
+    private int quarter = 1;
+    private float playClock = 15 * 60;
+
+    public int homeScore = 0;
+    public int awayScore = 0;    
+    private readonly int clockSpeed = 30;
 
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         HandleTouchdown();                
         UpdateScore();
+        CountdownPlayClock();
     }
 
     private void HandleTouchdown()
@@ -51,7 +50,67 @@ public class GameManager : MonoBehaviour
     {
         ball.position = Vector3.zero;
         Ball ballReference = ball.GetComponent<Ball>();        
-        ballReference.ballSpeed = 5; 
+        ballReference.ResetToInitialSpeed(); 
         ballReference.InvertDirection();
     }
+
+    private void CountdownPlayClock()
+    {
+        if (playClock > 0)
+        {
+            playClock -= Time.deltaTime * clockSpeed;
+            playClock = playClock < 0 ? 0 : playClock;
+            UpdatePlayClock();
+        } else
+        {
+            HandleEndQuarter();
+        }
+    }
+
+    private void UpdatePlayClock()
+    {
+        int minutes = Mathf.FloorToInt(playClock / 60);
+        int seconds = Mathf.FloorToInt(playClock % 60);
+
+        clock.text = $"{minutes:00}:{seconds:00}";
+    }
+
+    private void HandleEndQuarter()
+    {
+        if (quarter < 4)
+        {
+            quarter++;
+            ResetQuarter();
+        }
+        else
+        {
+            EndGame();
+        }        
+    }
+
+    private void ResetQuarter()
+    {
+        ResetBall();
+        playClock = 15 * 60;        
+        UpdatePlayClock();
+        UpdatePlayQuarter();
+    }
+
+    private void UpdatePlayQuarter()
+    {
+
+        quarters.text = quarter switch
+        {
+            1 => "1st Quarter",
+            2 => "2nd Quarter",
+            3 => "3rd Quarter",
+            4 => "4rd Quarter",
+            _ => "1st Quarter",
+        };
+    }
+
+    private void EndGame()
+    {
+        Time.timeScale = 0f;
+    }    
 }
