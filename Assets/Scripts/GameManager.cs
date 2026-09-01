@@ -1,10 +1,11 @@
-using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+
 
 public class GameManager : MonoBehaviour
 {
-    public Transform ball;
+    public Ball ball;
     public Text score;
     public Text clock;
     public Text quarters;
@@ -12,13 +13,18 @@ public class GameManager : MonoBehaviour
     private int quarter = 1;
     private float playClock = 15 * 60;
 
+    private bool isClockRunning = false;
+
+
+
     public int homeScore = 0;
     public int awayScore = 0;    
-    private readonly int clockSpeed = 30;
+    private readonly int clockSpeed = 10;
 
 
     void Update()
     {
+        KickOffGame();
         HandleTouchdown();                
         UpdateScore();
         CountdownPlayClock();
@@ -29,15 +35,19 @@ public class GameManager : MonoBehaviour
         float screenLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0)).x;
         float screenRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
 
-        if (ball.position.x < screenLeft)
+        if (ball.transform.position.x < screenLeft)
         {
             awayScore += 7;            
             ResetBall();
+            HoldGame();
+            Invoke(nameof(ResumeGame), 2f);
         }
-        if (ball.position.x > screenRight)
+        if (ball.transform.position.x > screenRight)
         {
             homeScore += 7;     
             ResetBall();       
+            HoldGame();
+            Invoke(nameof(ResumeGame), 2f);
         }
     }
 
@@ -48,22 +58,25 @@ public class GameManager : MonoBehaviour
 
     private void ResetBall()
     {
-        ball.position = Vector3.zero;
-        Ball ballReference = ball.GetComponent<Ball>();        
-        ballReference.ResetToInitialSpeed(); 
-        ballReference.InvertDirection();
+        ball.transform.position = Vector3.zero;
+        ball.ResetToInitialSpeed(); 
+        ball.InvertDirection();
+        ball.StopBall();
     }
 
     private void CountdownPlayClock()
     {
-        if (playClock > 0)
+        if (isClockRunning)
         {
-            playClock -= Time.deltaTime * clockSpeed;
-            playClock = playClock < 0 ? 0 : playClock;
-            UpdatePlayClock();
-        } else
-        {
-            HandleEndQuarter();
+            if (playClock > 0)
+            {
+                playClock -= Time.deltaTime * clockSpeed;
+                playClock = playClock < 0 ? 0 : playClock;
+                UpdatePlayClock();
+            } else
+            {
+                HandleEndQuarter();
+            }
         }
     }
 
@@ -91,6 +104,7 @@ public class GameManager : MonoBehaviour
     private void ResetQuarter()
     {
         ResetBall();
+        HoldGame();
         playClock = 15 * 60;        
         UpdatePlayClock();
         UpdatePlayQuarter();
@@ -113,4 +127,27 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 0f;
     }    
+
+    private void KickOffGame() 
+    {
+        if (Keyboard.current.spaceKey.isPressed)
+        {
+            isClockRunning = true;
+            ball.StartBall();
+        }
+    }
+
+    private void ResumeGame()
+    {
+        isClockRunning = true;
+        ball.StartBall();
+
+    }
+
+    private void HoldGame()
+    {
+        isClockRunning = false;
+        ball.StopBall();
+    }
+
 }

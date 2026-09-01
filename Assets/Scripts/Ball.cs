@@ -7,6 +7,8 @@ public class Ball : MonoBehaviour
 {
     public float initialBallSpeed = 5f;
     private float ballSpeed;
+
+    private bool isMoving = false;
     
     public Transform paddleLeft;
     public Transform paddleRight;
@@ -25,10 +27,13 @@ public class Ball : MonoBehaviour
 
     private void Move()
     {
-        Vector3 movement = Time.deltaTime * ballSpeed * direction;
-        transform.Translate(movement);                
-        HandleVerticalFieldColision();
-        HandlePaddleColision();
+        if (isMoving) 
+        {
+            Vector3 movement = Time.deltaTime * ballSpeed * direction;
+            transform.Translate(movement);                
+            HandleVerticalFieldColision();
+            HandlePaddleColision();
+        }
     }
 
     private void HandleVerticalFieldColision()
@@ -84,6 +89,16 @@ public class Ball : MonoBehaviour
     public void InvertDirection()
     {
         direction.x = -direction.x;        
+    }
+
+    public void StartBall()
+    {
+        isMoving = true;
+    }
+
+    public void StopBall()
+    {
+        isMoving = false;
     }
 
     private float AngleDirection()
