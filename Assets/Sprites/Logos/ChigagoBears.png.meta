@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d48d22990df85b33cb019e902a730764
+guid: fa48470f53005401491c96f8313c31c4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7360460405727964944
-    second: BackgroundField_0
+      213: 3343885644731212602
+    second: ChigagoBears_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BackgroundField_0
+      name: ChigagoBears_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1688
-        height: 932
+        width: 160
+        height: 120
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 01f2ebaddbb952660800000000000000
-      internalID: 7360460405727964944
+      spriteID: a336bb7f64ed76e20800000000000000
+      internalID: 3343885644731212602
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      BackgroundField_0: 7360460405727964944
+      ChigagoBears_0: 3343885644731212602
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
