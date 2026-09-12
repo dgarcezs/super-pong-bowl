@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public Ball ball;
+    public BallController ballController;
     public Text score;
     public Text clock;
     public Text quarters;
@@ -15,14 +15,13 @@ public class GameManager : MonoBehaviour
 
     private bool isClockRunning = false;
 
-
-
     public int homeScore = 0;
     public int awayScore = 0;    
     private readonly int clockSpeed = 10;
 
 
-    void Update()
+
+    private void Update()
     {
         KickOffGame();
         HandleTouchdown();                
@@ -35,14 +34,14 @@ public class GameManager : MonoBehaviour
         float screenLeft = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0)).x;
         float screenRight = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
 
-        if (ball.transform.position.x < screenLeft)
+        if (ballController.transform.position.x < screenLeft)
         {
             awayScore += 7;            
             ResetBall();
             HoldGame();
             Invoke(nameof(ResumeGame), 2f);
         }
-        if (ball.transform.position.x > screenRight)
+        if (ballController.transform.position.x > screenRight)
         {
             homeScore += 7;     
             ResetBall();       
@@ -58,10 +57,10 @@ public class GameManager : MonoBehaviour
 
     private void ResetBall()
     {
-        ball.transform.position = Vector3.zero;
-        ball.ResetToInitialSpeed(); 
-        ball.InvertDirection();
-        ball.StopBall();
+        ballController.transform.position = Vector3.zero;
+        ballController.ResetToInitialSpeed(); 
+        ballController.InvertDirection();
+        ballController.StopBall();
     }
 
     private void CountdownPlayClock()
@@ -115,11 +114,11 @@ public class GameManager : MonoBehaviour
 
         quarters.text = quarter switch
         {
-            1 => "1st Quarter",
-            2 => "2nd Quarter",
-            3 => "3rd Quarter",
-            4 => "4rd Quarter",
-            _ => "1st Quarter",
+            1 => "1st",
+            2 => "2nd",
+            3 => "3rd",
+            4 => "4th",
+            _ => "1st",
         };
     }
 
@@ -133,21 +132,20 @@ public class GameManager : MonoBehaviour
         if (Keyboard.current.spaceKey.isPressed)
         {
             isClockRunning = true;
-            ball.StartBall();
+            ballController.StartBall();
         }
     }
 
     private void ResumeGame()
     {
         isClockRunning = true;
-        ball.StartBall();
-
+        ballController.StartBall();
     }
 
     private void HoldGame()
     {
         isClockRunning = false;
-        ball.StopBall();
+        ballController.StopBall();
     }
 
 }

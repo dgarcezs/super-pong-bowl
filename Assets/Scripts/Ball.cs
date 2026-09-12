@@ -1,111 +1,23 @@
-using System.Collections;
-using System.Diagnostics;
-using Unity.VisualScripting;
 using UnityEngine;
 
+
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(BallController))]
 public class Ball : MonoBehaviour
 {
-    public float initialBallSpeed = 5f;
-    private float ballSpeed;
+    private static readonly int IsMovingHash = Animator.StringToHash("is_moving");
+    private Animator animator;
+    private BallController ballController;
 
-    private bool isMoving = false;
-    
-    public Transform paddleLeft;
-    public Transform paddleRight;
-    
-    
-    private Vector2 direction = Vector2.one;
+
     private void Start()
     {
-        ballSpeed = initialBallSpeed;
+        animator = GetComponent<Animator>();
+        ballController = GetComponent<BallController>();
     }
 
-    void Update()
+    private void Update()
     {
-        Move();
+        animator.SetBool(IsMovingHash, ballController.IsMoving);
     }
-
-    private void Move()
-    {
-        if (isMoving) 
-        {
-            Vector3 movement = Time.deltaTime * ballSpeed * direction;
-            transform.Translate(movement);                
-            HandleVerticalFieldColision();
-            HandlePaddleColision();
-        }
-    }
-
-    private void HandleVerticalFieldColision()
-    {
-        Vector3 position = transform.position;
-        float screenTop = Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height, 0)).y;
-        float screenBotton = Camera.main.ScreenToWorldPoint(new Vector3(0, 0, 0)).y;
-
-        if (direction.y > 0 && position.y >= (screenTop - 0.25f))
-        {
-            direction.y = -AngleDirection();
-            ballSpeed += 0.10f;
-        }
-
-        if (direction.y < 0 && position.y <= (screenBotton + 0.25f))
-        {
-            direction.y = AngleDirection();
-            ballSpeed += 0.10f;
-        }
-    }
-
-    private void HandlePaddleColision()
-    {
-        if (direction.x > 0)
-        {
-            // Handle Paddle Right Colision
-            if ((transform.position.x + (transform.localScale.x / 2f)) > (paddleRight.position.x - (paddleLeft.localScale.x / 2f))
-                && (transform.position.x + (transform.localScale.x / 2f)) < (paddleRight.position.x + (paddleLeft.localScale.x / 2f))
-                && (transform.position.y > paddleRight.position.y - paddleRight.localScale.y / 2f)
-                && (transform.position.y < paddleRight.position.y + paddleRight.localScale.y / 2f))
-            {
-                InvertDirection();                            
-            }
-
-        } else if (direction.x < 0)
-        {
-            // Handle PAddle Left Colision            
-            if ((transform.position.x - (transform.localScale.x / 2f)) < (paddleLeft.position.x + (paddleLeft.localScale.x / 2f))
-                && (transform.position.x - (transform.localScale.x / 2f)) > (paddleLeft.position.x - (paddleLeft.localScale.x / 2f))
-                && (transform.position.y > paddleLeft.position.y - paddleLeft.localScale.y / 2f)
-                && (transform.position.y < paddleLeft.position.y + paddleLeft.localScale.y / 2f))
-            {
-                InvertDirection();
-            }
-        }
-    }
-
-    public void ResetToInitialSpeed()
-    {
-        ballSpeed = initialBallSpeed;
-    }
-
-    public void InvertDirection()
-    {
-        direction.x = -direction.x;        
-    }
-
-    public void StartBall()
-    {
-        isMoving = true;
-    }
-
-    public void StopBall()
-    {
-        isMoving = false;
-    }
-
-    private float AngleDirection()
-    {
-        return Random.Range(0.5f, 1.5f);
-    }
-
-
-
 }
